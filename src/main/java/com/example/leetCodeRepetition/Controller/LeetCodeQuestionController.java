@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/question")
+@RequestMapping(path = "api/v1/question")
 public class LeetCodeQuestionController {
     @Autowired
-    private LeetCodeQuestionRepository repository;
+    private final LeetCodeQuestionRepository repository;
 
     public LeetCodeQuestionController(LeetCodeQuestionRepository repository) {
         this.repository = repository;
@@ -36,7 +36,7 @@ public class LeetCodeQuestionController {
     }
 
     @GetMapping("/findAll")
-    public List<LeetCodeQuestion>getQuestion(){
+    public List<LeetCodeQuestion>findAllQuestion(){
         return repository.findAll();
     }
 

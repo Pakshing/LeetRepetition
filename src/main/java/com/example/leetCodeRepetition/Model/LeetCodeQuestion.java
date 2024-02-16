@@ -2,6 +2,8 @@ package com.example.leetCodeRepetition.Model;
 
 import jakarta.persistence.*;
 
+import java.sql.Date;
+
 
 //enum Repetition{
 //    LOW,
@@ -9,7 +11,7 @@ import jakarta.persistence.*;
 //    HIGH
 //}
 @Entity
-@Table(name = "leet_code_question")
+@Table(name = "leetcode_question")
 public class LeetCodeQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +25,15 @@ public class LeetCodeQuestion {
     @Column(name = "tag", nullable = false)
     private String tag;
 
-    @Column(name = "deck_id")
+    @Column(name = "deck_id", nullable = false)
     private Integer deckId;
+
+    @Column(name = "tags")
+    private String[] tags;
+
+    @Column(name = "date_created", nullable = false)
+    private Date createdDate;
+
 
     public LeetCodeQuestion() {
     }
@@ -44,12 +53,24 @@ public class LeetCodeQuestion {
         this.id = id;
     }
 
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
     public String getUrl() {
