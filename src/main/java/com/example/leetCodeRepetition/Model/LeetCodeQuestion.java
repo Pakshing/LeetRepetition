@@ -26,7 +26,7 @@ public class LeetCodeQuestion {
     private String tag;
 
     @Column(name = "deck_id", nullable = false)
-    private Integer deckId;
+    private Integer deck_id;
 
     @Column(name = "tags")
     private String[] tags;
@@ -38,11 +38,11 @@ public class LeetCodeQuestion {
     public LeetCodeQuestion() {
     }
 
-    public LeetCodeQuestion(String name, String url, String tag, Integer deckId) {
+    public LeetCodeQuestion(String name, String url, String tag, Integer deck_id) {
         this.name = name;
         this.url = url;
         this.tag = tag;
-        this.deckId = deckId;
+        this.deck_id = deck_id;
     }
 
     public Integer getId() {
@@ -90,10 +90,10 @@ public class LeetCodeQuestion {
     }
 
     public Integer getDeckId() {
-        return deckId;
+        return deck_id;
     }
 
     public void setDeckId(Integer deckId) {
-        this.deckId = deckId;
+        this.deck_id = deckId;
     }
 }

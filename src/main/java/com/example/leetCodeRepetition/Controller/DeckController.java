@@ -44,9 +44,39 @@ public class DeckController {
         }
     }
 
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Object> findDeckById(@PathVariable Integer id) {
+        Deck deck = repository.findById(id).orElse(null);
+        if (deck == null) {
+            return new ResponseEntity<>("Deck not found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(deck, HttpStatus.OK);
+    }
+    @GetMapping("/find")
+    public ResponseEntity<Object> findDeckByUserId(@RequestParam Integer ownerId) {
+        List<Deck> decks = repository.findDeckByDeckOwnerId(ownerId);
+        if (decks.isEmpty()) {
+            return new ResponseEntity<>("No deck found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(decks, HttpStatus.OK);
+    }
+
     @GetMapping("/findAll")
     public List<Deck> findAllDeck() {
         return repository.findAll();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> deleteDeck(@PathVariable Integer id, @RequestParam Integer userId) {
+        Deck deck = repository.findById(id).orElse(null);
+        if (deck == null) {
+            return new ResponseEntity<>("Deck not found", HttpStatus.NOT_FOUND);
+        }
+        if (deck.getDeckOwnerId() != userId) {
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        repository.delete(deck);
+        return new ResponseEntity<>("Deck deleted", HttpStatus.OK);
     }
 
 }

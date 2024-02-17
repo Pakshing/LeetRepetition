@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import utils.MyLogger;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class LeetCodeQuestionController {
     @Autowired
     private final LeetCodeQuestionRepository repository;
+    private final MyLogger logger = new MyLogger();
 
     public LeetCodeQuestionController(LeetCodeQuestionRepository repository) {
         this.repository = repository;
@@ -35,9 +37,37 @@ public class LeetCodeQuestionController {
         }
     }
 
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Object> findQuestionById(@PathVariable Integer id) {
+        LeetCodeQuestion question = repository.findById(id).orElse(null);
+        if (question == null) {
+            return new ResponseEntity<>("Question not found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(question, HttpStatus.OK);
+    }
+
     @GetMapping("/findAll")
     public List<LeetCodeQuestion>findAllQuestion(){
         return repository.findAll();
+    }
+
+    @GetMapping("/findByDeckId/{deck_id}")
+    public ResponseEntity<Object> findQuestionByDeckId(@PathVariable Integer deck_id) {
+        List<LeetCodeQuestion> questions = repository.findQuestionByDeckId(deck_id);
+        if (questions.isEmpty()) {
+            return new ResponseEntity<>("No question found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(questions, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> deleteQuestion(@PathVariable Integer id) {
+        LeetCodeQuestion question = repository.findById(id).orElse(null);
+        if (question == null) {
+            return new ResponseEntity<>("Question not found", HttpStatus.NOT_FOUND);
+        }
+        repository.delete(question);
+        return new ResponseEntity<>("Question deleted", HttpStatus.OK);
     }
 
 
