@@ -22,13 +22,13 @@ public class LeetCodeQuestion {
     @Column(name = "url", nullable = false)
     private String url;
 
-    @Column(name = "tag", nullable = false)
-    private String tag;
+    @Column(name = "category", nullable = false)
+    private String category;
 
     @Column(name = "deck_id", nullable = false)
     private Integer deck_id;
 
-    @Column(name = "tags")
+    @Column(name = "tags", nullable = true)
     private String[] tags;
 
     @Column(name = "date_created", nullable = false)
@@ -41,7 +41,7 @@ public class LeetCodeQuestion {
     public LeetCodeQuestion(String name, String url, String tag, Integer deck_id) {
         this.name = name;
         this.url = url;
-        this.tag = tag;
+        this.category = category;
         this.deck_id = deck_id;
     }
 
@@ -81,12 +81,12 @@ public class LeetCodeQuestion {
         this.url = url;
     }
 
-    public String getTag() {
-        return tag;
+    public String getCategory() {
+        return category;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Integer getDeckId() {
