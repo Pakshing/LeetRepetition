@@ -10,4 +10,5 @@ public interface LeetCodeQuestionRepository extends JpaRepository<LeetCodeQuesti
     @Query(value = "SELECT * FROM leetCode_question WHERE deck_id = :deck_id", nativeQuery = true)
     List<LeetCodeQuestion> findQuestionByDeckId(Integer deck_id);
 
+
 }

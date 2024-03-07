@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import utils.MyLogger;
 
 @RestController
-@RequestMapping(path = "api/v1/user")
+@RequestMapping(path = "api/v1/users")
 public class UserController {
 
     @Autowired
@@ -20,10 +20,6 @@ public class UserController {
         this.repository = repository;
     }
 
-    @GetMapping("")
-    public String hello() {
-        return "User Controller: Hello World";
-    }
 
     // Add a new user
      @PostMapping("/add")

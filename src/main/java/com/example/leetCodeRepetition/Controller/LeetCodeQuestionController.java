@@ -11,7 +11,7 @@ import utils.MyLogger;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/question")
+@RequestMapping(path = "api/v1/questions")
 public class LeetCodeQuestionController {
     @Autowired
     private final LeetCodeQuestionRepository repository;
@@ -21,7 +21,7 @@ public class LeetCodeQuestionController {
         this.repository = repository;
     }
 
-    @GetMapping("")
+    @GetMapping("/hello")
     public String hello(){
         return "Hello World";
     }
@@ -46,6 +46,8 @@ public class LeetCodeQuestionController {
         return new ResponseEntity<>(question, HttpStatus.OK);
     }
 
+
+
     @GetMapping("/findAll")
     public List<LeetCodeQuestion>findAllQuestion(){
         return repository.findAll();
@@ -54,6 +56,15 @@ public class LeetCodeQuestionController {
     @GetMapping("/findByDeckId/{deck_id}")
     public ResponseEntity<Object> findQuestionByDeckId(@PathVariable Integer deck_id) {
         List<LeetCodeQuestion> questions = repository.findQuestionByDeckId(deck_id);
+        if (questions.isEmpty()) {
+            return new ResponseEntity<>("No question found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(questions, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByUserId/{user_id}")
+    public ResponseEntity<Object> findQuestionByUserId(@PathVariable Integer user_id) {
+        List<LeetCodeQuestion> questions = repository.findQuestionByDeckId(user_id);
         if (questions.isEmpty()) {
             return new ResponseEntity<>("No question found", HttpStatus.NOT_FOUND);
         }
