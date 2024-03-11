@@ -1,7 +1,7 @@
 package com.example.leetCodeRepetition.Controller;
 
-import com.example.leetCodeRepetition.Model.LeetCodeQuestion;
-import com.example.leetCodeRepetition.Repo.LeetCodeQuestionRepository;
+import com.example.leetCodeRepetition.Model.Question;
+import com.example.leetCodeRepetition.Repo.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +12,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/questions")
-public class LeetCodeQuestionController {
+public class QuestionController {
     @Autowired
-    private final LeetCodeQuestionRepository repository;
+    private final QuestionRepository repository;
     private final MyLogger logger = new MyLogger();
 
-    public LeetCodeQuestionController(LeetCodeQuestionRepository repository) {
+    public QuestionController(QuestionRepository repository) {
         this.repository = repository;
     }
 
@@ -25,9 +25,9 @@ public class LeetCodeQuestionController {
     public String hello(){
         return "Hello World";
     }
-    @PostMapping("/add")
-    public ResponseEntity<Object> createQuestion(@RequestBody LeetCodeQuestion question) {
-        LeetCodeQuestion createdQuestion = repository.save(question);
+    @PostMapping("")
+    public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
+        Question createdQuestion = repository.save(question);
         if (createdQuestion.getId() != null) {
             return new ResponseEntity<>(createdQuestion, HttpStatus.CREATED);
         } else {
@@ -39,7 +39,7 @@ public class LeetCodeQuestionController {
 
     @GetMapping("/find/{id}")
     public ResponseEntity<Object> findQuestionById(@PathVariable Integer id) {
-        LeetCodeQuestion question = repository.findById(id).orElse(null);
+        Question question = repository.findById(id).orElse(null);
         if (question == null) {
             return new ResponseEntity<>("Question not found", HttpStatus.NOT_FOUND);
         }
@@ -49,22 +49,14 @@ public class LeetCodeQuestionController {
 
 
     @GetMapping("/findAll")
-    public List<LeetCodeQuestion>findAllQuestion(){
+    public List<Question>findAllQuestion(){
         return repository.findAll();
     }
 
-    @GetMapping("/findByDeckId/{deck_id}")
-    public ResponseEntity<Object> findQuestionByDeckId(@PathVariable Integer deck_id) {
-        List<LeetCodeQuestion> questions = repository.findQuestionByDeckId(deck_id);
-        if (questions.isEmpty()) {
-            return new ResponseEntity<>("No question found", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(questions, HttpStatus.OK);
-    }
-
-    @GetMapping("/findByUserId/{user_id}")
-    public ResponseEntity<Object> findQuestionByUserId(@PathVariable Integer user_id) {
-        List<LeetCodeQuestion> questions = repository.findQuestionByDeckId(user_id);
+    @GetMapping("/find")
+    public ResponseEntity<Object> findQuestionByOwnerId(@RequestParam Integer owner_id) {
+        logger.info("Finding question by owner_id: " + owner_id);
+        List<Question> questions = repository.findQuestionByOwnerId(owner_id);
         if (questions.isEmpty()) {
             return new ResponseEntity<>("No question found", HttpStatus.NOT_FOUND);
         }
@@ -73,7 +65,7 @@ public class LeetCodeQuestionController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Object> deleteQuestion(@PathVariable Integer id) {
-        LeetCodeQuestion question = repository.findById(id).orElse(null);
+        Question question = repository.findById(id).orElse(null);
         if (question == null) {
             return new ResponseEntity<>("Question not found", HttpStatus.NOT_FOUND);
         }

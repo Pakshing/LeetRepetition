@@ -3,9 +3,8 @@ package com.example.leetCodeRepetition.Controller;
 // create the same class as LeetCodeQuestionController.java
 
 import com.example.leetCodeRepetition.Model.Deck;
-import com.example.leetCodeRepetition.Model.LeetCodeQuestion;
+import com.example.leetCodeRepetition.Model.Question;
 import com.example.leetCodeRepetition.Repo.DeckRepository;
-import com.example.leetCodeRepetition.Repo.LeetCodeQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ import utils.MyLogger;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/deck")
+@RequestMapping(path = "api/v1/decks")
 public class DeckController {
     @Autowired
     private final DeckRepository repository;

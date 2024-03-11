@@ -41,6 +41,7 @@ public class UserController {
         // Find a user by email
     @GetMapping("/find")
     public ResponseEntity<Object> findUserByEmail(@RequestParam String email) {
+        email = email.replace("\"", "");
         User user = repository.findUserByEmail(email);
         if (user == null) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
