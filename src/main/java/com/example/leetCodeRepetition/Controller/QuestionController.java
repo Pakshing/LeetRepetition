@@ -27,6 +27,11 @@ public class QuestionController {
     }
     @PostMapping("")
     public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
+        logger.info("Creating question: " + question.toString());
+        if(question.getNext_review_long() != null){
+            question.setNext_review(new java.sql.Timestamp(question.getNext_review_long()));
+        }
+
         Question createdQuestion = repository.save(question);
         if (createdQuestion.getId() != null) {
             return new ResponseEntity<>(createdQuestion, HttpStatus.CREATED);

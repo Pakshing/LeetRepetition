@@ -10,4 +10,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query(value = "SELECT * FROM question WHERE owner_id = :owner_id", nativeQuery = true)
     List<Question> findQuestionByOwnerId(Integer owner_id);
 
+
+
 }
