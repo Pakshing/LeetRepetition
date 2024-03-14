@@ -7,9 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
-    @Query(value = "SELECT * FROM question WHERE owner_id = :owner_id", nativeQuery = true)
+    @Query(value = "SELECT * FROM question WHERE owner_id = :owner_id order by last_completion DESC", nativeQuery = true)
     List<Question> findQuestionByOwnerId(Integer owner_id);
-
-
-
 }

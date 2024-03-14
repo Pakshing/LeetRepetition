@@ -20,7 +20,7 @@ public class Question {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "url", nullable = false)
+    @Column(name = "url", nullable = false, unique = true)
     private String url;
 
     @Column(name = "category", nullable = false)
@@ -54,6 +54,7 @@ public class Question {
         this.last_completion = new Timestamp(System.currentTimeMillis());
         this.tags = new String[0];
     }
+
 
     public Question(String title, String url, String category, Integer owner_id,String difficulty) {
         this.title = title;
