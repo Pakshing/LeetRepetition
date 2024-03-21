@@ -20,7 +20,7 @@ public class Question {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "url", nullable = false, unique = true)
+    @Column(name = "url", nullable = false)
     private String url;
 
     @Column(name = "category", nullable = false)

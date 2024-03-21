@@ -82,20 +82,35 @@ public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
     if (existingQuestion == null) {
         return new ResponseEntity<>("Question not found", HttpStatus.NOT_FOUND);
     }
-    existingQuestion.setTitle(updatedQuestion.getTitle());
-    existingQuestion.setUrl(updatedQuestion.getUrl());
-    existingQuestion.setCategory(updatedQuestion.getCategory());
-    existingQuestion.setOwner_id(updatedQuestion.getOwner_id());
-    existingQuestion.setTags(updatedQuestion.getTags());
-    existingQuestion.setDifficulty(updatedQuestion.getDifficulty());
-    existingQuestion.setLast_completion(new Timestamp(System.currentTimeMillis()));
     if(updatedQuestion.getNext_review_long() != null){
+        existingQuestion.setLast_completion(new Timestamp(System.currentTimeMillis()));
         existingQuestion.setNext_review(new java.sql.Timestamp(updatedQuestion.getNext_review_long()));
     }else{
         existingQuestion.setNext_review(null);
     }
     repository.save(existingQuestion);
     return new ResponseEntity<>(existingQuestion, HttpStatus.OK);
+    }
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Object> editQuestion(@PathVariable Integer id, @RequestBody Question updatedQuestion) {
+        Question existingQuestion = repository.findById(id).orElse(null);
+        if (existingQuestion == null) {
+            return new ResponseEntity<>("Question not found", HttpStatus.NOT_FOUND);
+        }
+        existingQuestion.setTitle(updatedQuestion.getTitle());
+        existingQuestion.setUrl(updatedQuestion.getUrl());
+        existingQuestion.setCategory(updatedQuestion.getCategory());
+        existingQuestion.setOwner_id(updatedQuestion.getOwner_id());
+        existingQuestion.setTags(updatedQuestion.getTags());
+        existingQuestion.setDifficulty(updatedQuestion.getDifficulty());
+        if(updatedQuestion.getNext_review_long() != null){
+            existingQuestion.setNext_review(new java.sql.Timestamp(updatedQuestion.getNext_review_long()));
+        }else{
+            existingQuestion.setNext_review(null);
+        }
+        repository.save(existingQuestion);
+        return new ResponseEntity<>(existingQuestion, HttpStatus.OK);
     }
 
 
