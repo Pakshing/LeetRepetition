@@ -53,6 +53,7 @@ public class Question {
         this.date_created = new Timestamp(System.currentTimeMillis());
         this.last_completion = new Timestamp(System.currentTimeMillis());
         this.tags = new String[0];
+
     }
 
 
@@ -105,6 +106,7 @@ public class Question {
     public void setUrl(String url) {
         this.url = url;
     }
+
 
     public String getCategory() {
         return category;

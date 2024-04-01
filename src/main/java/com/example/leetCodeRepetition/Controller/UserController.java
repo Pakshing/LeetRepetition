@@ -25,10 +25,12 @@ public class UserController {
      @PostMapping("/add")
      public ResponseEntity<Object> createUser(@RequestBody User user) {
          logger.info("Creating user: " + user.getEmail());
+         logger.info("Creating user: " + user.getLogin_method());
          if(repository.findUserByEmail(user.getEmail()) != null){
-                return new ResponseEntity<>("User already exists", HttpStatus.CONFLICT);
+                logger.info("User already exists");
+                return new ResponseEntity<>(repository.findUserByEmail(user.getEmail()), HttpStatus.OK);
          }
-         User createdUser = repository.save(new User(user.getEmail()));
+         User createdUser = repository.save(new User(user.getEmail(),user.getLogin_method()));
          if (createdUser.getId() != null) {
              return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
          } else {

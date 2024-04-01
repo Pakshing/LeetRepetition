@@ -59,7 +59,7 @@ public class User {
         return last_active;
     }
 
-    public String getLoginMethod() {
+    public String getLogin_method() {
         return login_method;
     }
 
@@ -75,7 +75,7 @@ public class User {
         this.last_active = last_active;
     }
 
-    public void setLoginMethod(String login_method) {
+    public void setLogin_method(String login_method) {
         this.login_method = login_method;
     }
 
