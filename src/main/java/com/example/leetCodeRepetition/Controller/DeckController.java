@@ -3,13 +3,12 @@ package com.example.leetCodeRepetition.Controller;
 // create the same class as LeetCodeQuestionController.java
 
 import com.example.leetCodeRepetition.Model.Deck;
-import com.example.leetCodeRepetition.Model.Question;
 import com.example.leetCodeRepetition.Repo.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import utils.MyLogger;
+import com.example.leetCodeRepetition.utils.MyLogger;
 
 import java.util.List;
 

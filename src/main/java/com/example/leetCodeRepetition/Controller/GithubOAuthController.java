@@ -1,21 +1,29 @@
 package com.example.leetCodeRepetition.Controller;
+import com.example.leetCodeRepetition.Model.User;
+import com.example.leetCodeRepetition.Service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import utils.MyLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.example.leetCodeRepetition.utils.JwtUtil;
+import com.example.leetCodeRepetition.utils.MyLogger;
+
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-public class OAuthController {
+@RequestMapping(path = "/api/v1/oauth2/github")
+public class GithubOAuthController {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil; //
     private final MyLogger logger = new MyLogger();
     @Value("${github.oauth2.client.id}")
     private String CLIENT_ID;
@@ -24,16 +32,29 @@ public class OAuthController {
     private static final String TOKEN_URL = "https://github.com/login/oauth/access_token";
     private static final String USER_URL = "https://api.github.com/user";
 
-    @GetMapping("github/oauth2/getUserEmail")
-    public ResponseEntity<Object> getGithubCode(@RequestParam("code") String code) {
+    @PostMapping("/authenticate")
+    public ResponseEntity<Object> authenticate(@RequestBody String code) {
         logger.info("Received code: " + code);
         String accessToken = getAccessToken(code);
         logger.info("Access token: " + accessToken);
         String email = getUserEmail(accessToken);
         logger.info("User email: " + email);
 
-        return new ResponseEntity<>(email, HttpStatus.OK);
+        User user = userService.findUserByEmail(email);
+        if (user == null) {
+            user = new User(email, "github");
+            user = userService.saveUser(user);
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail(), String.valueOf(user.getId()));
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("message", "Welcome, " + email + "!");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 
     private String getAccessToken(String code) {
         logger.info("Getting access token");
@@ -67,5 +88,30 @@ public class OAuthController {
             .map(emailMap -> (String) emailMap.get("email"))
             .findFirst()
             .orElse(null);
+    }
+
+    @GetMapping("/google/oauth2/getUserEmail")
+    public ResponseEntity<String> fetchGoogleUserEmailByAccessToken(@RequestParam("access_token") String accessToken) {
+        String url = "https://www.googleapis.com/oauth2/v3/userinfo";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+            Map<String, Object> data = response.getBody();
+
+            if (data != null && data.containsKey("email")) {
+                logger.info("google " + data.get("email"));
+                return new ResponseEntity<>((String) data.get("email"), HttpStatus.OK);
+            }
+        } catch (HttpClientErrorException e) {
+            logger.error(String.valueOf(e));
+            return new ResponseEntity<>("Failed to fetch email from Google", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>("Failure", HttpStatus.BAD_REQUEST);
     }
 }
