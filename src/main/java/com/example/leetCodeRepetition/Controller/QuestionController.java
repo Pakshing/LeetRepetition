@@ -1,11 +1,17 @@
 package com.example.leetCodeRepetition.Controller;
 
 import com.example.leetCodeRepetition.Model.Question;
+import com.example.leetCodeRepetition.Model.User;
 import com.example.leetCodeRepetition.Repo.QuestionRepository;
+import com.example.leetCodeRepetition.Repo.UserRepository;
+import com.example.leetCodeRepetition.Service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.example.leetCodeRepetition.utils.MyLogger;
 
@@ -15,6 +21,9 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/v1/questions")
 public class QuestionController {
+
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private final QuestionRepository repository;
     private final MyLogger logger = new MyLogger();
@@ -31,9 +40,21 @@ public class QuestionController {
 
 @PostMapping("")
 public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    logger.info("Authentication: " + authentication.toString());
+    String email = authentication.getName();
+
+    // Use UserRepository to load user details
+    User user = userRepository.findUserByEmail(email);
+
+    // Assuming your User model has a method getId
+    Integer owner_id = user.getId();
+    question.setOwner_id(owner_id);
     logger.info("Creating question: " + question.toString());
     String url = question.getUrl();
+    logger.info("URL: " + url);
     if(url.charAt(url.length()-1) == '/'){
+        logger.info("URL ends with / " + url.substring(0,question.getUrl().length()-1));
         question.setUrl(url.substring(0,question.getUrl().length()-1));
     }
     if(question.getNext_review_long() != null){
@@ -42,11 +63,13 @@ public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
 
     try {
         Question createdQuestion = repository.save(question);
+        logger.info("Question created \n" + createdQuestion.toString());
         return new ResponseEntity<>(createdQuestion, HttpStatus.CREATED);
     } catch (DataIntegrityViolationException e) {
         // Handle the exception here. For example, you can log the error and return a meaningful message to the user.
-        logger.error("A question with the same URL already exists.");
-        return new ResponseEntity<>("A question with the same URL already exists.", HttpStatus.CONFLICT);
+
+        logger.error("error:"+e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 }
 
@@ -67,8 +90,16 @@ public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<Object> findQuestionByOwnerId(@RequestParam Integer owner_id) {
-        logger.info("Finding question by owner_id: " + owner_id);
+    public ResponseEntity<Object> findQuestionByOwnerId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        // Use UserRepository to load user details
+        User user = userRepository.findUserByEmail(email);
+
+        // Assuming your User model has a method getId
+        Integer owner_id = user.getId();
+
         List<Question> questions = repository.findQuestionByOwnerId(owner_id);
         if (questions.isEmpty()) {
             return new ResponseEntity<>("No question found", HttpStatus.NOT_FOUND);
@@ -77,7 +108,15 @@ public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> updateQuestion(@PathVariable Integer id, @RequestBody Question updatedQuestion) {
+    public ResponseEntity<Object> updateQuestion(@RequestBody Question updatedQuestion) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+
+    // Use UserRepository to load user details
+    User user = userRepository.findUserByEmail(email);
+
+    // Assuming your User model has a method getId
+    Integer id = user.getId();
     Question existingQuestion = repository.findById(id).orElse(null);
     if (existingQuestion == null) {
         return new ResponseEntity<>("Question not found", HttpStatus.NOT_FOUND);
@@ -100,7 +139,7 @@ public ResponseEntity<Object> createQuestion(@RequestBody Question question) {
         }
         existingQuestion.setTitle(updatedQuestion.getTitle());
         existingQuestion.setUrl(updatedQuestion.getUrl());
-        existingQuestion.setCategory(updatedQuestion.getCategory());
+        existingQuestion.setTags(updatedQuestion.getTags());
         existingQuestion.setOwner_id(updatedQuestion.getOwner_id());
         existingQuestion.setTags(updatedQuestion.getTags());
         existingQuestion.setDifficulty(updatedQuestion.getDifficulty());

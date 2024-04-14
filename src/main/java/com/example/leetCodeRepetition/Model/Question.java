@@ -23,9 +23,6 @@ public class Question {
     @Column(name = "url", nullable = false)
     private String url;
 
-    @Column(name = "category", nullable = false)
-    private String category;
-
     @Column(name = "owner_id", nullable = false)
     private Integer owner_id;
 
@@ -57,27 +54,24 @@ public class Question {
     }
 
 
-    public Question(String title, String url, String category, Integer owner_id,String difficulty) {
+    public Question(String title, String url, Integer owner_id,String difficulty) {
         this.title = title;
         this.url = url;
-        this.category = category;
         this.owner_id = owner_id;
         this.difficulty = difficulty;
     }
 
-    public Question(String title, String url, String category, Integer owner_id,String difficulty, String[] tags) {
+    public Question(String title, String url, Integer owner_id,String difficulty, String[] tags) {
         this.title = title;
         this.url = url;
-        this.category = category;
         this.owner_id = owner_id;
         this.difficulty = difficulty;
         this.tags = tags;
     }
 
-    public Question(String title, String url, String category, Integer owner_id,String difficulty, Long next_review_long) {
+    public Question(String title, String url, Integer owner_id,String difficulty, Long next_review_long) {
         this.title = title;
         this.url = url;
-        this.category = category;
         this.owner_id = owner_id;
         this.difficulty = difficulty;
         this.next_review = new Timestamp(next_review_long);;
@@ -107,14 +101,6 @@ public class Question {
         this.url = url;
     }
 
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
 
     public Integer getOwner_id() {
         return owner_id;
@@ -178,7 +164,6 @@ public class Question {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", url='" + url + '\'' +
-                ", category='" + category + '\'' +
                 ", owner_id=" + owner_id +
                 ", tags=" + Arrays.toString(tags) +
                 ", date_created=" + date_created +
