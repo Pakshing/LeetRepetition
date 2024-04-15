@@ -16,13 +16,12 @@ public class JwtUtil {
 
     private final MyLogger logger = new MyLogger();
 
-    public String generateToken(String email, String id) {
+    public String generateToken(String email) {
         logger.debug("Generating JWT: " + SECRET_KEY);
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         long oneMonthInMillis = 1000L * 60 * 60 * 24 * 30; // 1 month in milliseconds
         String jwt = Jwts.builder()
                 .setSubject(email)
-                .claim("id", id) // add id to the JWT claims
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + oneMonthInMillis)) // 1 month expiration
                 .signWith(key, SignatureAlgorithm.HS256)

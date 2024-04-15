@@ -15,8 +15,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -48,7 +51,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             }
+        }else{
+            logger.info("Token is not valid");
+            if (request.getCookies() != null) {
+                logger.info("Cookies: " + Arrays.toString(request.getCookies()));
+                Cookie tokenCookie = Arrays.stream(request.getCookies())
+                        .filter(cookie -> "token".equals(cookie.getName()))
+                        .findFirst()
+                        .orElse(null);
+                logger.info("tokenCookie: " + tokenCookie);
+                if (tokenCookie != null) {
+                    logger.info("tokenCookie: " + tokenCookie.getValue());
+                    jwtToken = tokenCookie.getValue();
+                    logger.info("jwtToken: from http cookie " + jwtToken);
+                    email = jwtTokenUtil.getEmailFromToken(jwtToken);
+                    logger.info("email: from http cookie " + email);
+                }
+            }
         }
+
+
+
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 

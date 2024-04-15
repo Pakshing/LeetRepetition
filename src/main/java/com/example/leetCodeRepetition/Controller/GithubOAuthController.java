@@ -1,6 +1,8 @@
 package com.example.leetCodeRepetition.Controller;
 import com.example.leetCodeRepetition.Model.User;
 import com.example.leetCodeRepetition.Service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -33,7 +35,7 @@ public class GithubOAuthController {
     private static final String USER_URL = "https://api.github.com/user";
 
     @PostMapping("/authenticate")
-    public ResponseEntity<Object> authenticate(@RequestBody String code) {
+    public ResponseEntity<Object> authenticate(@RequestBody String code,HttpServletResponse response) {
         logger.info("Received code: " + code);
         String accessToken = getAccessToken(code);
         logger.info("Access token: " + accessToken);
@@ -46,12 +48,13 @@ public class GithubOAuthController {
             user = userService.saveUser(user);
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), String.valueOf(user.getId()));
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        response.put("message", "Welcome, " + email + "!");
+        String token = jwtUtil.generateToken(user.getEmail());
+        //cookie.setSecure(true);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Welcome, " + email + "!");
+        responseBody.put("token", token);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
 

@@ -37,7 +37,7 @@ public class SecurityConfig {
          http
                 .csrf(csrf->csrf.disable())
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/v1/oauth2/**","/error").permitAll() // Exclude login and token endpoints from authentication
+                        .requestMatchers("/api/v1/oauth2/**","/error","/logout","/login","/api/v1/users/testUserLogin").permitAll() // Exclude login and token endpoints from authentication
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement

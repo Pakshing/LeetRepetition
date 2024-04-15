@@ -50,7 +50,7 @@ public class GoogleOauthController {
             user = userService.saveUser(user);
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), String.valueOf(user.getId()));
+        String token = jwtUtil.generateToken(user.getEmail());
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
         response.put("message", "Welcome, " + email + "!");
@@ -109,7 +109,7 @@ public class GoogleOauthController {
         user = userService.saveUser(user);
     }
 
-    String token = jwtUtil.generateToken(user.getEmail(), String.valueOf(user.getId()));
+    String token = jwtUtil.generateToken(user.getEmail());
 
     Cookie cookie = new Cookie("token", token);
     cookie.setHttpOnly(true);
